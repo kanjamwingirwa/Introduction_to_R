@@ -1,0 +1,213 @@
+---
+title: "New_IP"
+author: "Farnadis_Kanja"
+date: "1/24/2022"
+output: html_document
+---
+```{r}
+library("readr")
+
+```
+
+
+```{r}
+kanja <- read.csv("kanja.csv")
+head(kanja)
+```
+Let's Preview the dataset
+```{r}
+summary(kanja)
+```
+Let's look at the length of the dataset
+```{r}
+length(kanja)
+```
+This dataset has 1000 entries
+Let us look at the dimensions of the dataset
+```{r}
+dim(kanja)
+```
+This dataset has 1000 rows and 10 columns
+We now need to identify the names of the colums
+```{r}
+colnames(kanja)
+```
+Let us now identify datatypes
+```{r}
+sapply(kanja,class)
+```
+We need to change the timestamp to date 
+```{r}
+kanja$Timestamp <-as.Date(kanja$Timestamp, format = "%Y-%m-%s-%h-%m -%s")
+#checking if the change has been implemented
+sapply(kanja,class)
+```
+Univariate Analysis
+Let's begin with daily time spent on site
+```{r}
+mean(kanja$Daily.Time.Spent.on.Site)
+median(kanja$Daily.Time.Spent.on.Site)
+#mode
+y <- kanja$Daily.Time.Spent.on.Site
+names(table(y))[table(y)==max(table(y))]
+```
+The numbers above are the ones that most frequently appear on the dataset
+Let's check the distribution using a histogram
+```{r}
+hist(y, col=c("blue"))
+```
+The mean time spent on the site is 65.0002
+The median is 68.215
+The time that appears most commonly is 62.26,75.55,77.05,78.76,84.53
+As we can see the distribution is left-skewed. 
+
+*Age*
+```{r}
+mean(kanja$Age)
+median(kanja$Age)
+#mode
+k <- kanja$Age
+#names(table(k))[table(k)==max(table(k))]
+
+```
+```{r}
+hist(k, col=c("yellow"))
+```
+The mean age is 36.009
+The median age is 35
+The mode age is 31
+Most respondents are between the age of 25 to 40
+The data is positively skewed. 
+Income
+```{r}
+mean(kanja$Area.Income)
+```
+```{r}
+median(kanja$Area.Income)
+```
+```{r}
+t <- kanja$Area.Income
+#names(table(m))[table(m)==max(table(m))]
+```
+
+
+```{r}
+hist(t, col=c("purple"))
+```
+The data is left skewed
+The mean income is 55000 and the mode is 57102
+Most people earn between 40000 and 70000
+*Daily Internet Usage*
+```{r}
+mean(kanja$Daily.Internet.Usage)
+```
+```{r}
+median(kanja$Daily.Internet.Usage)
+```
+```{r}
+s <- kanja$Daily.Internet.Usage
+```
+```{r}
+hist(s,col = c("grey"))
+```
+Our data is positively skewed with two peaks whereby the second mode seems to be more pronounced than the other. 
+The mean internet usage is 180 mins 
+The mode internet usage is 183
+*Gender*
+
+```{r}
+male <- table(kanja$Male)
+```
+```{r}
+barplot(male, main="Distribution of Gender", col = c("pink","blue"),xlab="Gender")
+```
+There is an almost equal distribution of the genders although there are slightly more women than men.
+*City*
+#Let's see how many cities are in the data set
+```{r}
+length(levels(kanja$City))
+```
+There is a total of 969 cities in the dataset
+```{r}
+c <-kanja$City
+```
+
+
+```{r}
+sort(c)
+```
+
+```{r}
+names(table(c))[table(c)==max(table(c))]
+```
+The two most popular cities are Lisamouth and Williamsport
+*Country*
+#Let's see how many countries there are in the dataset
+```{r}
+length(levels(kanja$Country))
+```
+There are 237 countries in the dataset
+
+
+```{r}
+a <-kanja$Country
+```
+```{r}
+sort(a)
+```
+```{r}
+names(table(a))[table(a)==max(table(a))]
+```
+Czech Republic and France are the two most popular countries
+
+*Clicked on Ad*
+The viewers either clicked on ad or they did not
+```{r}
+clicked <- table(kanja$Clicked.on.Ad)
+```
+
+
+```{r}
+barplot(clicked, main="Distribution of Adertisements Clicked", col = c("black","red"),xlab="Clicked.on.Ad")
+```{r}
+```
+There seems to be an equal distribution of those who clicked on an advertisement and those who did not. 
+There were 500 unique values
+
+*Bivariate Analysis*
+We shall begin by dropping the topic line for ad as it seems to serve no purpose. 
+df2 <- subset(kanja, select = c (Daily.Time.Spent.on.Site, Age,Area.Income,Daily.Internt.Usage,Male,Clicked.on.Ad))
+```{r}
+df2 <- subset(kanja, select = c (Daily.Time.Spent.on.Site, Age,Area.Income,Daily.Internet.Usage,Male,Clicked.on.Ad))
+```
+
+
+```{r}
+head(df2)
+```
+For correlation, let's use Pearsons
+
+```{r}
+mydata=cor(df2,method = c("pearson"))
+```
+
+
+```{r}
+mydata
+```
+Looking at the above results, we can see than many of the variables are either negatively correlated or have very little correlation. In fact, the most correlation is between the daily time spent on site and the daily internet usage which actually does make sense.
+
+```{r}
+library(ggplot2)
+```
+```{r}
+ggplot(mpg,
+       aes (x = "Male",
+       fill = "Clicked.on.Ad"==1,)) +
+  geom_bar(position = "dodge")
+```
+Conclusions
+There seems to be no relation between the variables except the rather obvious ones. 
+Theere is very little gender disparity btn those who clicked and those who did not click. Gender has no influence. 
+About half of the men clicked on the ads. 
+
